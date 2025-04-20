@@ -1,0 +1,49 @@
+# Default values for the compute-service Helm chart
+replicaCount: 1
+
+image:
+  repository: compute-service
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 5000
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+podSecurityContext: {}
+
+securityContext: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  - name: LOG_LEVEL
+    value: "INFO"
+
+# Configuration for the compute service
+computeService:
+  logLevel: "INFO"
+  enableBatchProcessing: true
+  maxBatchSize: 1000 
