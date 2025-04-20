@@ -2,11 +2,18 @@ import sys
 import os
 import unittest
 from unittest.mock import patch
+import math
 
 # Add the parent directory to the path so we can import the code
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from code.compute_service import ComputeService
+# Try the direct import
+try:
+    from code.compute_service import ComputeService
+except ImportError:
+    # Alternative import approach
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+    from code.compute_service import ComputeService
 
 
 class TestComputeService(unittest.TestCase):
@@ -16,7 +23,7 @@ class TestComputeService(unittest.TestCase):
     def test_add(self):
         self.assertEqual(self.service.add(5, 3), 8)
         self.assertEqual(self.service.add(-1, 1), 0)
-        self.assertEqual(self.service.add(0.1, 0.2), 0.3)
+        self.assertAlmostEqual(self.service.add(0.1, 0.2), 0.3, places=10)
 
     def test_subtract(self):
         self.assertEqual(self.service.subtract(5, 3), 2)
@@ -55,10 +62,10 @@ class TestComputeService(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.service.process_batch('invalid_op', test_data)
             
-        # Test with invalid data item
+        # Test with invalid data item - correct expected value
         with patch('logging.Logger.warning') as mock_warning:
             results = self.service.process_batch('add', [{'a': 1}, {'a': 2, 'b': 2}])
-            self.assertEqual(results, [2])
+            self.assertEqual(results, [4])
             mock_warning.assert_called_once()
 
 
