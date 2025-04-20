@@ -82,6 +82,17 @@ jobs:
         path: .cr-release-packages/*.tgz
         retention-days: 5
         
+    - name: Download Helm chart
+      uses: actions/download-artifact@v3
+      with:
+        name: helm-chart
+        path: .cr-release-packages-download
+        
+    - name: Verify downloaded artifacts
+      run: |
+        echo "Downloaded artifacts:"
+        ls -la .cr-release-packages-download
+        
     - name: Publish Helm chart
       # This is a placeholder for the actual publish command
       # In a real scenario, you might use chart-releaser or push to a Helm registry
@@ -90,9 +101,9 @@ jobs:
         
         # Example using chart-releaser (commented out for now)
         # curl -L https://github.com/helm/chart-releaser/releases/download/v1.5.0/chart-releaser_1.5.0_linux_amd64.tar.gz | tar xzf -
-        # ./cr upload -o yourusername -r compute-service -p .cr-release-packages
-        # ./cr index -o yourusername -r compute-service -p .cr-release-packages --push
+        # ./cr upload -o yourusername -r compute-service -p .cr-release-packages-download
+        # ./cr index -o yourusername -r compute-service -p .cr-release-packages-download --push
         
         # Example using generic Helm registry (OCI)
         # helm registry login registry.example.com --username ${{ secrets.REGISTRY_USERNAME }} --password ${{ secrets.REGISTRY_PASSWORD }}
-        # helm push .cr-release-packages/compute-service-*.tgz oci://registry.example.com/charts 
+        # helm push .cr-release-packages-download/compute-service-*.tgz oci://registry.example.com/charts 
